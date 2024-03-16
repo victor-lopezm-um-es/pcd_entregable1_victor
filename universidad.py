@@ -42,10 +42,33 @@ class MiembroDepartamento(Persona):
             self.departamento = departamento
         
         else:
-            raise ValueError("El atributo de departamento debe pertenecer a la enumeración Departamento")
-    
+            raise ValueError("El atributo de departamento debe pertenecer a la enumeración Departamento")   
 
-e1 = Estudiante(nombre='Víctor', dni='23309573Q', direccion='C/ General Aznar, 61', sexo=Sexo.VARON, asignaturas=['PCD', 'ML', 'AEM', 'SSySS', 'BB.DD.-II'])
-m1 = MiembroDepartamento(nombre='Pedro', dni='23434945S', direccion='C/ Rio Ebro, 23', sexo=Sexo.VARON, departamento=Departamento.DIIC)
+class Investigador(MiembroDepartamento):
+    def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion):
+        MiembroDepartamento.__init__(self, nombre, dni, direccion, sexo, departamento)
+        self.area_investigacion = area_investigacion
+
+class ProfesorAsociado(MiembroDepartamento):
+    def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
+        super().__init__(nombre, dni, direccion, sexo, departamento)
+        self.asignaturas = asignaturas
+
+class ProfesorTitular(Investigador, ProfesorAsociado):
+    def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion, asignaturas):
+        Investigador.__init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion)
+        ProfesorAsociado.__init__(self, nombre, dni, direccion, sexo, departamento, asignaturas)
+
+e1 = Estudiante(nombre='Víctor', dni='23309573Q', direccion='C/ General Aznar, 61', 
+                sexo=Sexo.VARON, asignaturas=['PCD', 'ML', 'AEM', 'SSySS', 'BB.DD.-II'])
+
+m1 = MiembroDepartamento(nombre='Pedro', dni='23434945S', direccion='C/ Rio Ebro, 23', 
+                         sexo=Sexo.VARON, departamento=Departamento.DIIC)
+
 m1.cambia_departamento(departamento=Departamento.DITEC)
+
+p1 = ProfesorTitular(nombre='Josefa', dni='12312344E', direccion='C/ Calasparra, 23', 
+                     sexo=Sexo.MUJER, departamento=Departamento.DITEC, area_investigacion='Ing. Software',
+                     asignaturas=['PCD', 'ED'])
+
 print(e1.muestra_estudiante())
