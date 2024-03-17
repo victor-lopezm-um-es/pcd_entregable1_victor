@@ -16,59 +16,123 @@ class Persona:
 
 class Estudiante(Persona):
     def __init__(self, nombre, dni, direccion, sexo, asignaturas):
-        super().__init__(nombre, dni, direccion, sexo)
+        super().__init__(nombre, dni, direccion, sexo) # Hereda atributos de Persona
         self.asignaturas = asignaturas
 
-    def muestra_estudiante(self):
+    def muestra_estudiante(self):   # Muestra todos los datos del estudiante
         salida = "Nombre: {} | DNI: {} | Dirección: {} | Sexo: {} \nAsignaturas:".format(
             self.nombre, self.dni, self.direccion, self.sexo
             )
         for asig in self.asignaturas:
-            salida += f'\n\t{asig}'
+            salida += f"| {asig} |"
         return  salida
     
-class Departamento(Enum):
+class Departamento(Enum): # Enumeración
     DIIC = 1
     DITEC = 2
     DIS = 3
 
-class MiembroDepartamento(Persona):
+class MiembroDepartamento(Persona): # Clase abstracta
     def __init__(self, nombre, dni, direccion, sexo, departamento):
-        super().__init__(nombre, dni, direccion, sexo)
+        super().__init__(nombre, dni, direccion, sexo) # Hereda de persona
         self.departamento = departamento
 
+    def muestra_datos(self):
+        salida = "Nombre: {} | DNI: {} | Dirección: {} | Sexo: {} | Departamento: {}".format(
+            self.nombre, self.dni, self.direccion, self.sexo, self.departamento
+            )
+        return  salida
+
     def cambia_departamento(self, departamento):
-        if isinstance(departamento, Departamento):
-            self.departamento = departamento
-        
-        else:
+        if isinstance(departamento, Departamento): # Nos aseguramos de que departamento 
+            self.departamento = departamento       # sea un elemento de la enumeración
+            
+        else: # Si no, aviso del error
             raise ValueError("El atributo de departamento debe pertenecer a la enumeración Departamento")   
 
-class Investigador(MiembroDepartamento):
+class Investigador(MiembroDepartamento): # Hereda de MiembroDepartamento
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion):
         MiembroDepartamento.__init__(self, nombre, dni, direccion, sexo, departamento)
         self.area_investigacion = area_investigacion
 
-class ProfesorAsociado(MiembroDepartamento):
+    def muestra_datos(self): # Sobrecarga el método muestra_datos
+        salida = super().muestra_datos()
+        salida += '\nArea investigación: {}'.format(self.area_investigacion)
+        return salida
+
+class ProfesorAsociado(MiembroDepartamento): # Hereda de MiembroDepartamento
     def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
         super().__init__(nombre, dni, direccion, sexo, departamento)
         self.asignaturas = asignaturas
+
+    def muestra_datos(self): # Sobrecarga el método muestra_datos
+        salida = super().muestra_datos()
+        salida += '\nAsignaturas: '
+
+        for asig in self.asignaturas:
+            salida += f"| {asig} |"
+
+        return salida
 
 class ProfesorTitular(Investigador, ProfesorAsociado):
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion, asignaturas):
         Investigador.__init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion)
         ProfesorAsociado.__init__(self, nombre, dni, direccion, sexo, departamento, asignaturas)
 
+    def muestra_datos(self): # Sobrecarga el método muestra_datos
+        salida = ProfesorAsociado.muestra_datos(self)
+        salida += '\nArea investigación: {}'.format(self.area_investigacion)
+
+        return salida
+    
+class Universidad: # Clase desde la que se gestionan las operaciones
+    def __init__(self, estudiantes, miembros_departamento): # Almacena todas las personas de la universidad
+        self._estudiantes = estudiantes
+        self._miembros_departamento = miembros_departamento
+
+    # TODAS LAS OPERACIONES QUE SE DESEAN HACER
+
+    def añadir_estudiante(self, estudiante):
+        self._estudiantes.append(estudiante)
+
+    def añadir_miembro_departamento(self, miembro_departamento):
+        self._miembros_departamento.append(miembro_departamento)
+
+    def cambia_departamento(self, miembro_departamento, departamento):
+        miembro_departamento.cambia_departamento(departamento)
+
+    def listadoEstudiantes(self):
+        print("\tESTUDIANTES: ")
+        for est in self._estudiantes:
+            print(f"{est.muestra_estudiante()}\n")
+
+    def listadoMiembrosDepartamento(self):
+        print("\tMIEMBROS DE DEPARTAMENTO: ")
+
+        for miem in self._miembros_departamento:
+            print(f"{miem.muestra_datos()}\n")
+
 e1 = Estudiante(nombre='Víctor', dni='23309573Q', direccion='C/ General Aznar, 61', 
                 sexo=Sexo.VARON, asignaturas=['PCD', 'ML', 'AEM', 'SSySS', 'BB.DD.-II'])
 
-m1 = MiembroDepartamento(nombre='Pedro', dni='23434945S', direccion='C/ Rio Ebro, 23', 
-                         sexo=Sexo.VARON, departamento=Departamento.DIIC)
+i1 = Investigador(nombre='Pedro', dni='23434945S', direccion='C/ Rio Ebro, 23', 
+                  sexo=Sexo.VARON, departamento=Departamento.DIIC, area_investigacion='Biologia Molecular')
 
-m1.cambia_departamento(departamento=Departamento.DITEC)
+i1.cambia_departamento(departamento=Departamento.DITEC)
 
 p1 = ProfesorTitular(nombre='Josefa', dni='12312344E', direccion='C/ Calasparra, 23', 
                      sexo=Sexo.MUJER, departamento=Departamento.DITEC, area_investigacion='Ing. Software',
                      asignaturas=['PCD', 'ED'])
 
-print(e1.muestra_estudiante())
+
+# Pequeñas pruebas
+
+p1.cambia_departamento(departamento=Departamento.DIIC)
+
+uni = Universidad(estudiantes=[], miembros_departamento=[])
+uni.añadir_estudiante(estudiante=e1)
+uni.añadir_miembro_departamento(miembro_departamento=p1) 
+uni.añadir_miembro_departamento(miembro_departamento=i1) 
+
+uni.listadoEstudiantes()
+uni.listadoMiembrosDepartamento()
