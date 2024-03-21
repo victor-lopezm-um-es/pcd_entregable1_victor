@@ -112,27 +112,28 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         for miem in self._miembros_departamento:
             print(f"{miem.muestra_datos()}\n")
 
-e1 = Estudiante(nombre='Víctor', dni='23309573Q', direccion='C/ General Aznar, 61', 
-                sexo=Sexo.VARON, asignaturas=['PCD', 'ML', 'AEM', 'SSySS', 'BB.DD.-II'])
-
-i1 = Investigador(nombre='Pedro', dni='23434945S', direccion='C/ Rio Ebro, 23', 
-                  sexo=Sexo.VARON, departamento=Departamento.DIIC, area_investigacion='Biologia Molecular')
-
-i1.cambia_departamento(departamento=Departamento.DITEC)
-
-p1 = ProfesorTitular(nombre='Josefa', dni='12312344E', direccion='C/ Calasparra, 23', 
-                     sexo=Sexo.MUJER, departamento=Departamento.DITEC, area_investigacion='Ing. Software',
-                     asignaturas=['PCD', 'ED'])
-
 
 # Pequeñas pruebas
+if __name__=='__main__':
+    e1 = Estudiante(nombre='Víctor', dni='23309573Q', direccion='C/ General Aznar, 61', 
+                    sexo=Sexo.VARON, asignaturas=['PCD', 'ML', 'AEM', 'SSySS', 'BB.DD.-II'])
 
-p1.cambia_departamento(departamento=Departamento.DIIC)
+    i1 = Investigador(nombre='Pedro', dni='23434945S', direccion='C/ Rio Ebro, 23', 
+                    sexo=Sexo.VARON, departamento=Departamento.DIIC, area_investigacion='Biologia Molecular')
 
-uni = Universidad(estudiantes=[], miembros_departamento=[])
-uni.añadir_estudiante(estudiante=e1)
-uni.añadir_miembro_departamento(miembro_departamento=p1) 
-uni.añadir_miembro_departamento(miembro_departamento=i1) 
+    i1.cambia_departamento(departamento=Departamento.DITEC)
 
-uni.listadoEstudiantes()
-uni.listadoMiembrosDepartamento()
+    p1 = ProfesorTitular(nombre='Josefa', dni='12312344E', direccion='C/ Calasparra, 23', 
+                        sexo=Sexo.MUJER, departamento=Departamento.DITEC, area_investigacion='Ing. Software',
+                        asignaturas=['PCD', 'ED'])
+
+
+    p1.cambia_departamento(departamento=Departamento.DIIC)
+
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    uni.añadir_estudiante(estudiante=e1)
+    uni.añadir_miembro_departamento(miembro_departamento=p1) 
+    uni.añadir_miembro_departamento(miembro_departamento=i1) 
+
+    uni.listadoEstudiantes()
+    uni.listadoMiembrosDepartamento()
