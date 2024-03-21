@@ -60,7 +60,7 @@ class Investigador(MiembroDepartamento): # Hereda de MiembroDepartamento
         salida += '\nArea investigación: {}'.format(self.area_investigacion)
         return salida
 
-class ProfesorAsociado(MiembroDepartamento): # Hereda de MiembroDepartamento
+class Profesor(MiembroDepartamento): # Hereda de MiembroDepartamento
     def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
         super().__init__(nombre, dni, direccion, sexo, departamento)
         self.asignaturas = asignaturas
@@ -74,16 +74,20 @@ class ProfesorAsociado(MiembroDepartamento): # Hereda de MiembroDepartamento
 
         return salida
 
-class ProfesorTitular(Investigador, ProfesorAsociado):
+class ProfesorTitular(Investigador, Profesor):
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion, asignaturas):
         Investigador.__init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion)
-        ProfesorAsociado.__init__(self, nombre, dni, direccion, sexo, departamento, asignaturas)
+        Profesor.__init__(self, nombre, dni, direccion, sexo, departamento, asignaturas)
 
     def muestra_datos(self): # Sobrecarga el método muestra_datos
-        salida = ProfesorAsociado.muestra_datos(self)
+        salida = Profesor.muestra_datos(self)
         salida += '\nArea investigación: {}'.format(self.area_investigacion)
 
         return salida
+    
+class ProfesorAsociado(Profesor):
+    def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
+        super().__init__(nombre, dni, direccion, sexo, departamento, asignaturas)
     
 class Universidad: # Clase desde la que se gestionan las operaciones
     def __init__(self, estudiantes, miembros_departamento): # Almacena todas las personas de la universidad
@@ -101,16 +105,21 @@ class Universidad: # Clase desde la que se gestionan las operaciones
     def cambia_departamento(self, miembro_departamento, departamento):
         miembro_departamento.cambia_departamento(departamento)
 
-    def listadoEstudiantes(self):
+    def muestraEstudiantes(self):
         print("\tESTUDIANTES: ")
         for est in self._estudiantes:
             print(f"{est.muestra_estudiante()}\n")
 
-    def listadoMiembrosDepartamento(self):
+    def muestraMiembrosDepartamento(self):
         print("\tMIEMBROS DE DEPARTAMENTO: ")
 
         for miem in self._miembros_departamento:
             print(f"{miem.muestra_datos()}\n")
+
+    def _obtener_estudiante(self, estudiante_str):
+        for estudiante_obj in self._estudiantes:
+            if estudiante_obj.nombre == estudiante_str:
+                return estudiante_obj
 
 
 # Pequeñas pruebas
@@ -135,5 +144,5 @@ if __name__=='__main__':
     uni.añadir_miembro_departamento(miembro_departamento=p1) 
     uni.añadir_miembro_departamento(miembro_departamento=i1) 
 
-    uni.listadoEstudiantes()
-    uni.listadoMiembrosDepartamento()
+    uni.muestraEstudiantes()
+    uni.muestraMiembrosDepartamento()
