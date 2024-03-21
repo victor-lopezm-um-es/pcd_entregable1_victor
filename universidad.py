@@ -32,13 +32,35 @@ class Estudiante(Persona):
             raise TypeError("Debes pasar el parámetro asignaturas como una lista")
         
         super().__init__(nombre, dni, direccion, sexo) # Hereda atributos de Persona
-        self.asignaturas = asignaturas
+        self._asignaturas = asignaturas
+
+    def matricularse_de_asignatura(self, asignatura):
+        if not isinstance(asignatura, str):
+            raise TypeError("Debes pasar el parámetro asignatura como un string")
+
+        if asignatura in self._asignaturas:
+            print(f"{self.nombre} ya estaba matriculado de la asignatura {asignatura}")
+        
+        else:
+            self._asignaturas.append(asignatura)
+            print(f"{self.nombre} se matricula de {asignatura}")
+
+    def finalizar_asignatura(self, asignatura):
+        if not isinstance(asignatura, str):
+            raise TypeError("Debes pasar el parámetro asignatura como un string")
+        
+        if asignatura in self._asignaturas:
+            self._asignaturas.remove(asignatura)
+            print(f"Asignatura {asignatura} finalizada para {self.nombre}")
+        
+        else:
+            print(f"{self.nombre} no estaba matriculado de {asignatura}")
 
     def muestra_estudiante(self):   # Muestra todos los datos del estudiante
         salida = "Nombre: {} | DNI: {} | Dirección: {} | Sexo: {} \nAsignaturas:".format(
             self.nombre, self.dni, self.direccion, self.sexo
             )
-        for asig in self.asignaturas:
+        for asig in self._asignaturas:
             salida += f"| {asig} |"
         return  salida
     
