@@ -39,3 +39,23 @@ def test_cambiar_Departamento():
     mD_str = 'Josefa'
     uni.cambia_departamento(miembro_departamento=mD_str, departamento=new_dep)
     assert p1.departamento == uni._obtener_departamento_de_miembro(mD_str)
+
+def test_matricularse_de_asignatura():
+    estudiante = Estudiante("Ismael", "23435494F", "Calle Echegaray, 42", Sexo.VARON, ["PCD", "IE"])
+    estudiante.matricularse_de_asignatura("ED")
+    assert "ED" in estudiante._asignaturas
+
+def test_matricularse_de_asignatura_existente():
+    estudiante = Estudiante("Ismael", "23435494F", "Calle Echegaray, 42", Sexo.VARON, ["PCD", "IE"])
+    estudiante.matricularse_de_asignatura("PCD")
+    assert "PCD" in estudiante._asignaturas
+
+def test_finalizar_asignatura_existente():
+    estudiante = Estudiante("Ismael", "23435494F", "Calle Echegaray, 42", Sexo.VARON, ["PCD", "IE"])
+    estudiante.finalizar_asignatura("PCD")
+    assert "PCD" not in estudiante._asignaturas
+
+def test_finalizar_asignatura_inexistente():
+    estudiante = Estudiante("Ismael", "23435494F", "Calle Echegaray, 42", Sexo.VARON, ["PCD", "IE"])
+    estudiante.finalizar_asignatura("ED")
+    assert "ED" not in estudiante._asignaturas
