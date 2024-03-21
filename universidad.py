@@ -103,7 +103,8 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         self._miembros_departamento.append(miembro_departamento)
 
     def cambia_departamento(self, miembro_departamento, departamento):
-        miembro_departamento.cambia_departamento(departamento)
+        mD_obj = self._obtener_miembroDepartamento(miembro_departamento)
+        mD_obj.cambia_departamento(departamento)
 
     def muestraEstudiantes(self):
         print("\tESTUDIANTES: ")
@@ -120,6 +121,15 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         for estudiante_obj in self._estudiantes:
             if estudiante_obj.nombre == estudiante_str:
                 return estudiante_obj
+    
+    def _obtener_miembroDepartamento(self, mD_str):
+        for mD_obj in self._miembros_departamento:
+            if mD_obj.nombre == mD_str:
+                return mD_obj
+    
+    def _obtener_departamento_de_miembro(self, mD_str):
+        mD_obj = self._obtener_miembroDepartamento(mD_str)
+        return mD_obj.departamento
 
 
 # Pequeñas pruebas
@@ -143,6 +153,8 @@ if __name__=='__main__':
     uni.añadir_estudiante(estudiante=e1)
     uni.añadir_miembro_departamento(miembro_departamento=p1) 
     uni.añadir_miembro_departamento(miembro_departamento=i1) 
+
+    uni.cambia_departamento(miembro_departamento='Josefa', departamento=Departamento.DIS)
 
     uni.muestraEstudiantes()
     uni.muestraMiembrosDepartamento()
