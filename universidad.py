@@ -9,6 +9,18 @@ class Sexo(Enum):
 
 class Persona:
     def __init__(self, nombre, dni, direccion, sexo):
+        if not isinstance(nombre, str):
+            raise TypeError("Debes pasar el parámetro nombre como un string")
+        
+        if not isinstance(dni, str):
+            raise TypeError("Debes pasar el parámetro dni como un string")
+        
+        if not isinstance(direccion, str):
+            raise TypeError("Debes pasar el parámetro direccion como un string")
+        
+        if not isinstance(sexo, Sexo):
+            raise TypeError("Debes pasar el parámetro sexo como un objeto Sexo")
+
         self.nombre = nombre
         self.dni = dni
         self.direccion = direccion
@@ -16,6 +28,9 @@ class Persona:
 
 class Estudiante(Persona):
     def __init__(self, nombre, dni, direccion, sexo, asignaturas):
+        if not isinstance(asignaturas, list):
+            raise TypeError("Debes pasar el parámetro asignaturas como una lista")
+        
         super().__init__(nombre, dni, direccion, sexo) # Hereda atributos de Persona
         self.asignaturas = asignaturas
 
@@ -34,6 +49,8 @@ class Departamento(Enum): # Enumeración
 
 class MiembroDepartamento(Persona): # Clase abstracta
     def __init__(self, nombre, dni, direccion, sexo, departamento):
+        if not isinstance(departamento, Departamento):  # Nos aseguramos de que departamento sea un elemento de la enumeración
+            raise TypeError("Debes pasar el parámetro departamento como un objeto Departamento")
         super().__init__(nombre, dni, direccion, sexo) # Hereda de persona
         self.departamento = departamento
 
@@ -44,14 +61,13 @@ class MiembroDepartamento(Persona): # Clase abstracta
         return  salida
 
     def cambia_departamento(self, departamento):
-        if isinstance(departamento, Departamento): # Nos aseguramos de que departamento 
-            self.departamento = departamento       # sea un elemento de la enumeración
-            
-        else: # Si no, aviso del error
-            raise ValueError("El atributo de departamento debe pertenecer a la enumeración Departamento")   
+        self.departamento = departamento      
 
 class Investigador(MiembroDepartamento): # Hereda de MiembroDepartamento
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion):
+        if not isinstance(area_investigacion, str): 
+            raise TypeError("Debes pasar el parámetro area_investigacion como un string")
+
         MiembroDepartamento.__init__(self, nombre, dni, direccion, sexo, departamento)
         self.area_investigacion = area_investigacion
 
@@ -62,6 +78,9 @@ class Investigador(MiembroDepartamento): # Hereda de MiembroDepartamento
 
 class Profesor(MiembroDepartamento): # Hereda de MiembroDepartamento
     def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
+        if not isinstance(asignaturas, list):
+            raise TypeError("Debes pasar el parámetro asignaturas como una lista")
+        
         super().__init__(nombre, dni, direccion, sexo, departamento)
         self.asignaturas = asignaturas
 
@@ -97,13 +116,40 @@ class Universidad: # Clase desde la que se gestionan las operaciones
     # TODAS LAS OPERACIONES QUE SE DESEAN HACER
 
     def añadir_estudiante(self, estudiante):
-        self._estudiantes.append(estudiante)
+        if isinstance(estudiante, Estudiante):
+            self._estudiantes.append(estudiante)
+        
+        else:
+            raise TypeError("Debes pasar el parámetro estudiante como un objeto del tipo Estudiante")
+        
+    def eliminar_estudiante(self, estudiante): 
+        if isinstance(estudiante, str):
+            estudiante_obj = self._obtener_estudiante(estudiante) # obtengo la instancia a través del nombre del estudiante
+            self._estudiantes.remove(estudiante_obj)
+
+        else:
+            raise TypeError("Debes pasar el parámetro estudiante como un string")
 
     def añadir_miembro_departamento(self, miembro_departamento):
-        self._miembros_departamento.append(miembro_departamento)
+        if isinstance(miembro_departamento, MiembroDepartamento):
+            self._miembros_departamento.append(miembro_departamento)
+
+        else:
+            raise TypeError("Debes pasar como parámetro un objeto del tipo MiembroDepartamento")
+        
+    def eliminar_miembro_departamento(self, miembro_departamento): 
+        if isinstance(miembro_departamento, str):
+            mD_obj = self._obtener_miembroDepartamento(miembro_departamento) # obtengo la instancia a través del nombre del MD
+            self._miembros_departamento.remove(mD_obj)
+
+        else:
+            raise TypeError("Debes pasar el parámetro estudiante como un string")
 
     def cambia_departamento(self, miembro_departamento, departamento):
-        mD_obj = self._obtener_miembroDepartamento(miembro_departamento)
+        if not isinstance(miembro_departamento, str):
+            raise TypeError("Debes pasar el parámetro miembro_departamento como un string")
+
+        mD_obj = self._obtener_miembroDepartamento(miembro_departamento) # obtengo la instancia a través del nombre del MD
         mD_obj.cambia_departamento(departamento)
 
     def muestraEstudiantes(self):
