@@ -2,12 +2,13 @@
 # Víctor López Martínez
 
 from enum import Enum
+from abc import ABCMeta, ABC, abstractmethod
 
 class Sexo(Enum):
     VARON = 1
     MUJER = 2
 
-class Persona:
+class Persona(metaclass=ABCMeta):
     def __init__(self, nombre, dni, direccion, sexo):
         if not isinstance(nombre, str):
             raise TypeError("Debes pasar el parámetro nombre como un string")
@@ -94,11 +95,11 @@ class Investigador(MiembroDepartamento): # Hereda de MiembroDepartamento
         self.area_investigacion = area_investigacion
 
     def muestra_datos(self): # Sobrecarga el método muestra_datos
-        salida = super().muestra_datos()
-        salida += '\nArea investigación: {}'.format(self.area_investigacion)
+        salida = MiembroDepartamento.muestra_datos(self)
+        salida += '\nÁrea investigación: {}'.format(self.area_investigacion)
         return salida
 
-class Profesor(MiembroDepartamento): # Hereda de MiembroDepartamento
+class Profesor(MiembroDepartamento, metaclass=ABCMeta): # Hereda de MiembroDepartamento
     def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
         if not isinstance(asignaturas, list):
             raise TypeError("Debes pasar el parámetro asignaturas como una lista")
@@ -106,15 +107,10 @@ class Profesor(MiembroDepartamento): # Hereda de MiembroDepartamento
         super().__init__(nombre, dni, direccion, sexo, departamento)
         self.asignaturas = asignaturas
 
+    @abstractmethod
     def muestra_datos(self): # Sobrecarga el método muestra_datos
-        salida = super().muestra_datos()
-        salida += '\nAsignaturas: '
-
-        for asig in self.asignaturas:
-            salida += f"| {asig} |"
-
-        return salida
-
+        pass
+    
 class ProfesorTitular(Investigador, Profesor):
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion, asignaturas):
         Investigador.__init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion)
@@ -124,11 +120,27 @@ class ProfesorTitular(Investigador, Profesor):
         salida = Profesor.muestra_datos(self)
         salida += '\nArea investigación: {}'.format(self.area_investigacion)
 
+    def muestra_datos(self):
+        salida = Investigador.muestra_datos(self)
+        salida += '\nAsignaturas: '
+
+        for asig in self.asignaturas:
+            salida += f"| {asig} |"
+
         return salida
     
 class ProfesorAsociado(Profesor):
     def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
         super().__init__(nombre, dni, direccion, sexo, departamento, asignaturas)
+
+    def muestra_datos(self): # Sobrecarga el método muestra_datos
+        salida = MiembroDepartamento.muestra_datos(self)
+        salida += '\nAsignaturas: '
+
+        for asig in self.asignaturas:
+            salida += f"| {asig} |"
+
+        return salida
     
 class Universidad: # Clase desde la que se gestionan las operaciones
     def __init__(self, estudiantes, miembros_departamento): # Almacena todas las personas de la universidad
@@ -222,7 +234,7 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         return mD_obj.departamento
 
 
-# Pequeñas pruebas
+# Pruebas exploratorias
 if __name__=='__main__':
     e1 = Estudiante(nombre='Víctor', dni='23309573Q', direccion='C/ General Aznar, 61', 
                     sexo=Sexo.VARON, asignaturas=['PCD', 'ML', 'AEM', 'SSySS', 'BB.DD.-II'])
