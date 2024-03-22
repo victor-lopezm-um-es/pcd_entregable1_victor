@@ -1,4 +1,5 @@
 from universidad import *
+import pytest
 
 def test_añadir_estudiante():
     uni = Universidad(estudiantes=[], miembros_departamento=[])
@@ -40,6 +41,7 @@ def test_cambiar_Departamento():
     uni.cambia_departamento(miembro_departamento=mD_str, departamento=new_dep)
     assert p1.departamento == uni._obtener_departamento_de_miembro(mD_str)
 
+# Para matricularse desde la instancia Estudiante
 def test_matricularse_de_asignatura():
     estudiante = Estudiante("Ismael", "23435494F", "Calle Echegaray, 42", Sexo.VARON, ["PCD", "IE"])
     estudiante.matricularse_de_asignatura("ED")
@@ -59,3 +61,40 @@ def test_finalizar_asignatura_inexistente():
     estudiante = Estudiante("Ismael", "23435494F", "Calle Echegaray, 42", Sexo.VARON, ["PCD", "IE"])
     estudiante.finalizar_asignatura("ED")
     assert "ED" not in estudiante._asignaturas
+
+# Para matricularse desde la instancia universidad
+def test_matricular_estudiante_asignatura():   
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    estudiante = Estudiante("Roberto", "12345678A", "Calle Echegaray, 27", Sexo.VARON, ["PCD", "IE"])
+    uni.añadir_estudiante(estudiante)
+
+    uni.matricular_estudiante_asignatura("Roberto", "ED")
+    assert "ED" in estudiante._asignaturas
+
+def test_matricular_estudiante_asignatura_invalid_estudiante():
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    with pytest.raises(TypeError):
+        uni.matricular_estudiante_asignatura(123, "ED")
+
+def test_matricular_estudiante_asignatura_invalid_asignatura():
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    with pytest.raises(TypeError):
+        uni.matricular_estudiante_asignatura("Roberto", 123)
+
+def test_finalizar_estudiante_asignatura():
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    estudiante = Estudiante("Roberto", "12345678A", "Calle Echegaray, 27", Sexo.VARON, ["PCD", "IE"])
+    uni.añadir_estudiante(estudiante)
+
+    uni.finalizar_estudiante_asignatura("Roberto", "PCD")
+    assert "PCD" not in estudiante._asignaturas
+
+def test_finalizar_estudiante_asignatura_invalid_estudiante():
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    with pytest.raises(TypeError):
+        uni.finalizar_estudiante_asignatura(123, "ED")
+
+def test_finalizar_estudiante_asignatura_invalid_asignatura():
+    uni = Universidad(estudiantes=[], miembros_departamento=[])
+    with pytest.raises(TypeError):
+        uni.finalizar_estudiante_asignatura("Roberto", 123)
