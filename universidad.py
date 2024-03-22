@@ -174,6 +174,28 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         mD_obj = self._obtener_miembroDepartamento(miembro_departamento) # obtengo la instancia a través del nombre del MD
         mD_obj.cambia_departamento(departamento)
 
+    def matricular_estudiante_asignatura(self, estudiante, asignatura):
+        if isinstance(estudiante, str):
+            estudiante_obj = self._obtener_estudiante(estudiante) # obtengo la instancia a través del nombre del estudiante
+
+            if isinstance(asignatura, str):
+                estudiante_obj.matricularse_de_asignatura(asignatura)
+            else: raise TypeError("Debes pasar el parámetro asignatura como un string")
+
+        else:
+            raise TypeError("Debes pasar el parámetro estudiante como un string")
+        
+    def finalizar_estudiante_asignatura(self, estudiante, asignatura):
+        if isinstance(estudiante, str):
+            estudiante_obj = self._obtener_estudiante(estudiante) # obtengo la instancia a través del nombre del estudiante
+
+            if isinstance(asignatura, str):
+                estudiante_obj.finalizar_asignatura(asignatura)
+            else: raise TypeError("Debes pasar el parámetro asignatura como un string")
+
+        else:
+            raise TypeError("Debes pasar el parámetro estudiante como un string")
+
     def muestraEstudiantes(self):
         print("\tESTUDIANTES: ")
         for est in self._estudiantes:
