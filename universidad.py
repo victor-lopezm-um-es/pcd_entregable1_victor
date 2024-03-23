@@ -4,6 +4,7 @@
 from enum import Enum
 from abc import ABCMeta, ABC, abstractmethod
 
+# Excepciones
 class NoDepartamentoError(Exception):
     pass
 
@@ -38,9 +39,10 @@ class Sexo(Enum):
     VARON = 1
     MUJER = 2
 
-class Persona(metaclass=ABCMeta):
+
+class Persona(metaclass=ABCMeta): # Clase abstracta
     def __init__(self, nombre, dni, direccion, sexo):
-        if not isinstance(nombre, str):
+        if not isinstance(nombre, str): # Comprobamos que los parámetros sean del tipo correcto
             raise TypeError("Debes pasar el parámetro nombre como un string")
         
         if not isinstance(dni, str):
@@ -57,7 +59,7 @@ class Persona(metaclass=ABCMeta):
         self.direccion = direccion
         self.sexo = sexo
 
-class Estudiante(Persona):
+class Estudiante(Persona): # Hereda de Persona
     def __init__(self, nombre, dni, direccion, sexo, asignaturas):
         if not isinstance(asignaturas, list):
             raise NoAsignaturasListError("Debes pasar el parámetro asignaturas como una lista")
@@ -65,7 +67,7 @@ class Estudiante(Persona):
         super().__init__(nombre, dni, direccion, sexo) # Hereda atributos de Persona
         self._asignaturas = asignaturas
 
-    def matricularse_de_asignatura(self, asignatura):
+    def matricularse_de_asignatura(self, asignatura): # Método para matricularse de una asignatura
         if not isinstance(asignatura, str):
             raise NoAsignaturaStrError("Debes pasar el parámetro asignatura como un string")
 
@@ -76,7 +78,7 @@ class Estudiante(Persona):
             self._asignaturas.append(asignatura)
             print(f"{self.nombre} se matricula de {asignatura}")
 
-    def finalizar_asignatura(self, asignatura):
+    def finalizar_asignatura(self, asignatura): # Método para finalizar una asignatura
         if not isinstance(asignatura, str):
             raise NoAsignaturaStrError("Debes pasar el parámetro asignatura como un string")
         
@@ -108,13 +110,13 @@ class MiembroDepartamento(Persona): # Clase abstracta
         super().__init__(nombre, dni, direccion, sexo) # Hereda de persona
         self.departamento = departamento
 
-    def muestra_datos(self):
+    def muestra_datos(self): # Método para mostrar los datos de un miembro del departamento
         salida = "Nombre: {} | DNI: {} | Dirección: {} | Sexo: {} | Departamento: {}".format(
             self.nombre, self.dni, self.direccion, self.sexo, self.departamento
             )
         return  salida
 
-    def cambia_departamento(self, departamento):
+    def cambia_departamento(self, departamento): # Método para cambiar el departamento de un miembro del departamento
         if not isinstance(departamento, Departamento):
             raise NoDepartamentoError("ERROR: Debes pasar el parámetro departamento como un objeto Departamento")
         self.departamento = departamento      
@@ -144,7 +146,7 @@ class Profesor(MiembroDepartamento, metaclass=ABCMeta): # Hereda de MiembroDepar
     def muestra_datos(self): # Sobrecarga el método muestra_datos
         pass
     
-class ProfesorTitular(Investigador, Profesor):
+class ProfesorTitular(Investigador, Profesor): # Hereda de Investigador y Profesor
     def __init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion, asignaturas):
         Investigador.__init__(self, nombre, dni, direccion, sexo, departamento, area_investigacion)
         Profesor.__init__(self, nombre, dni, direccion, sexo, departamento, asignaturas)
@@ -158,7 +160,7 @@ class ProfesorTitular(Investigador, Profesor):
 
         return salida
     
-class ProfesorAsociado(Profesor):
+class ProfesorAsociado(Profesor): # Hereda de Profesor
     def __init__(self, nombre, dni, direccion, sexo, departamento, asignaturas):
         super().__init__(nombre, dni, direccion, sexo, departamento, asignaturas)
 
@@ -178,14 +180,14 @@ class Universidad: # Clase desde la que se gestionan las operaciones
 
     # TODAS LAS OPERACIONES QUE SE DESEAN HACER
 
-    def añadir_estudiante(self, estudiante):
+    def añadir_estudiante(self, estudiante): # Añade un estudiante a la lista de estudiantes
         try:
             self._estudiantes.append(estudiante)
         
         except NoEstudianteError:
             print("ERROR: Debes pasar el parámetro estudiante como un objeto del tipo Estudiante")
         
-    def eliminar_estudiante(self, estudiante): 
+    def eliminar_estudiante(self, estudiante):  # Elimina un estudiante de la lista de estudiantes
         try:
             estudiante_obj = self._obtener_estudiante(estudiante) # obtengo la instancia a través del nombre del estudiante
             self._estudiantes.remove(estudiante_obj)
@@ -193,14 +195,14 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         except NoEstudianteStrError:
             print("Debes pasar el parámetro estudiante como un string")
 
-    def añadir_miembro_departamento(self, miembro_departamento):
+    def añadir_miembro_departamento(self, miembro_departamento): # Añade un miembro del departamento a la lista de miembros del departamento
         if isinstance(miembro_departamento, MiembroDepartamento):
             self._miembros_departamento.append(miembro_departamento)
 
         else:
             raise NoMiembroDepartamentoError("Debes pasar como parámetro un objeto del tipo MiembroDepartamento")
         
-    def eliminar_miembro_departamento(self, miembro_departamento): 
+    def eliminar_miembro_departamento(self, miembro_departamento):  # Elimina un miembro del departamento de la lista de miembros del departamento
         try:
             mD_obj = self._obtener_miembroDepartamento(miembro_departamento) # obtengo la instancia a través del nombre del MD
             self._miembros_departamento.remove(mD_obj)
@@ -208,7 +210,7 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         except NoMiembroDepartamentoStrError:
             print("ERROR: Debes pasar el parámetro miembro_departamento como un string")
 
-    def cambia_departamento(self, miembro_departamento, departamento):
+    def cambia_departamento(self, miembro_departamento, departamento): # Cambia el departamento de un miembro del departamento
         try:
             mD_obj = self._obtener_miembroDepartamento(miembro_departamento) # obtengo la instancia a través del nombre del MD
             mD_obj.cambia_departamento(departamento)
@@ -219,7 +221,7 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         except NoDepartamentoError:
             print("ERROR: Debes pasar el parámetro departamento como un objeto Departamento")
 
-    def matricular_estudiante_asignatura(self, estudiante, asignatura):
+    def matricular_estudiante_asignatura(self, estudiante, asignatura): # Matricular a un estudiante de una asignatura
         try:
             estudiante_obj = self._obtener_estudiante(estudiante) # obtengo la instancia a través del nombre del estudiante
             estudiante_obj.matricularse_de_asignatura(asignatura)
@@ -230,7 +232,7 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         except NoAsignaturaStrError:
             print("ERROR: Debes pasar el parámetro asignatura como un string")
 
-    def finalizar_estudiante_asignatura(self, estudiante, asignatura):
+    def finalizar_estudiante_asignatura(self, estudiante, asignatura): # Finalizar una asignatura de un estudiante
         try:
             estudiante_obj = self._obtener_estudiante(estudiante) # obtengo la instancia a través del nombre del estudiante
             estudiante_obj.finalizar_asignatura(asignatura)
@@ -241,18 +243,18 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         except NoAsignaturaStrError:
             print("ERROR: Debes pasar el parámetro asignatura como un string")
 
-    def muestraEstudiantes(self):
+    def muestraEstudiantes(self): # Muestra todos los estudiantes
         print("\tESTUDIANTES: ")
         for est in self._estudiantes:
             print(f"{est.muestra_estudiante()}\n")
 
-    def muestraMiembrosDepartamento(self):
+    def muestraMiembrosDepartamento(self): # Muestra todos los miembros del departamento
         print("\tMIEMBROS DE DEPARTAMENTO: ")
 
         for miem in self._miembros_departamento:
             print(f"{miem.muestra_datos()}\n")
 
-    def _obtener_estudiante(self, estudiante_str):
+    def _obtener_estudiante(self, estudiante_str): # Método para obtener un estudiante a través de su nombre
         if not isinstance(estudiante_str, str):
             raise NoEstudianteStrError("ERROR: Debes pasar el parámetro estudiante_str como un string")
 
@@ -263,7 +265,7 @@ class Universidad: # Clase desde la que se gestionan las operaciones
         # Si no se encuentra el estudiante, se lanza una excepción
         raise NotFoundEstudianteStrError(f"ERROR: No se encontró el estudiante con el nombre '{estudiante_str}'")
     
-    def _obtener_miembroDepartamento(self, mD_str):
+    def _obtener_miembroDepartamento(self, mD_str): # Método para obtener un miembro del departamento a través de su nombre
         if not isinstance(mD_str, str):
             raise NoMiembroDepartamentoStrError("ERROR: Debes pasar el parámetro mD_str como un string")
         
@@ -271,7 +273,7 @@ class Universidad: # Clase desde la que se gestionan las operaciones
             if mD_obj.nombre == mD_str:
                 return mD_obj
     
-    def _obtener_departamento_de_miembro(self, mD_str):
+    def _obtener_departamento_de_miembro(self, mD_str): # Método para obtener el departamento de un miembro de departamento
         try:
             mD_obj = self._obtener_miembroDepartamento(mD_str)
             dep = mD_obj.departamento
